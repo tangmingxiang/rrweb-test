@@ -27,14 +27,47 @@
       <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
       <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
     </ul>
+    <input type="text" name="" id="">
+    <button @click="stopRecord">播放</button>
+    <div class="palyer"></div>
   </div>
 </template>
 
 <script>
+import * as rrweb from "rrweb"
+import "rrweb-player/dist/style.css"
+import rrwebPlayer from "rrweb-player";
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  data() {
+    return {
+      events: [],
+      stopFn: null
+    }
+  },
+  methods: {
+    stopRecord(){
+      this.stopFn && this.stopFn()
+      new rrwebPlayer({
+        target: document.querySelector(".palyer"), // 可以自定义 DOM 元素
+        props: {
+          events: this.events,
+          speedOption: [1, 2, 5, 10],
+        },
+      });
+    }
+  },
+  mounted() {
+    let that = this.events
+    this.stopFn = rrweb.record({
+      emit(event) {
+        // 将 event 存入 events 数组中
+        that.push(event);
+      },
+    });
   }
 }
 </script>
